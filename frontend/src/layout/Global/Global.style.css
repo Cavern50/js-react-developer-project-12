@@ -1,0 +1,17 @@
+.globalLayout {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 100vh;
+    padding: 30px;
+}
+
+.globalLayout > * {
+    width: 100%;
+}
+
+.globalPaper {
+    width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+    box-shadow: 0px 0px 8px 0px rgba(34, 60, 80, 0.2);
+}
