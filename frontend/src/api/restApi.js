@@ -14,11 +14,14 @@ export class RestApi {
 
 
   async #create(headers) {
+    const { token } = JSON.parse(localStorage.getItem('auth'))
+    const headerAuth = token && { Authorization: `Bearer ${token}` };
     const service = axios.create({
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        ...headers
+        ...headers,
+        ...headerAuth
       }
     });
     service.interceptors.response.use(this.handleSuccess, this.handleError);
@@ -27,13 +30,15 @@ export class RestApi {
 
   get = async (path = "", headers) => {
     const service = await this.#create(headers);
-
-    return service.request({
-      method: "GET",
-      url: `${this.url}${path}`
-    })
-      .then(res => res.data.data)
-      .catch(err => this.handleError(err));
+    try {
+      const { data } = await service.request({
+        method: "GET",
+        url: `${this.url}${path}`
+      })
+      return data;
+    } catch (e) {
+      throw e;
+    }
   };
 
   post = async (path = "", requestParams = {}, headers) => {

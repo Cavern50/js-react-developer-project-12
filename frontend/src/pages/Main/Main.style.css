@@ -1,0 +1,36 @@
+.chat {
+    display: flex;
+    gap: 80px;
+}
+
+.chatChannels {
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+}
+
+.chatItem {
+    cursor: pointer;
+}
+
+.chatBlock {
+    width: calc(100% - 240px);
+}
+
+.chatWindow {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 400px;
+}
+
+.chatTitle {
+    color: var(--accent-color);
+}
+.chatMessages {
+    width: 100%;
+}
+.chatForm {
+    width: 100%;
+    align-self: flex-end;
+}

@@ -16,6 +16,15 @@ class Api extends RestApi {
             throw e;
         }
     }
+
+    async getData() {
+        try {
+            const data = await this.get('data');
+            return data;
+        } catch(e) {
+            throw e;
+        }
+    }
 }
 
 export const api = new Api();
