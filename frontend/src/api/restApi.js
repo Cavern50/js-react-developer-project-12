@@ -14,8 +14,8 @@ export class RestApi {
 
 
   async #create(headers) {
-    const { token } = JSON.parse(localStorage.getItem('auth'))
-    const headerAuth = token && { Authorization: `Bearer ${token}` };
+    const auth = JSON.parse(localStorage.getItem('auth'))
+    const headerAuth = auth?.token && { Authorization: `Bearer ${auth?.token}` };
     const service = axios.create({
       headers: {
         "Accept": "application/json",
