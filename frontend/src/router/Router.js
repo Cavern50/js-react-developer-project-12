@@ -6,7 +6,7 @@ export const Router = () => {
     return (
         <Routes>
             <Route element={<Layout.Global />}>
-                {Object.values(ROUTES).map((route) => <Route {...route} />)}
+                {Object.values(ROUTES).map((route) => <Route key={route.path} {...route} />)}
             </Route>
         </Routes>
     )
