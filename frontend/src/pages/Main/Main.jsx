@@ -1,20 +1,27 @@
 import React from 'react';
 import './Main.style.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchChatData, changeCurrentChannel } from './slice/chat';
+import { fetchChatData, changeCurrentChannel, addMessage } from './slice/chat';
 import { Formik } from 'formik';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
-export const Main = () => {
+import { io } from "socket.io-client";
+import {useAuthContext} from "utils/auth";
+import {api} from "api/api";
 
+const socket = io("ws://");
+
+export const Main = () => {
+    const auth = useAuthContext();
     const chatData = useSelector((state) => state.chat);
 
     const dispatch = useDispatch();
 
-    console.log(chatData);
+
 
     React.useEffect(() => {
-        dispatch(fetchChatData())
+        dispatch(fetchChatData());
+        // socket.emit('removeChannel', { id: 1 });
     }, [])
 
     const changeChannelHandler = (id) => {
@@ -24,6 +31,16 @@ export const Main = () => {
     }
 
     const currentChannel = chatData.channels.find((item) => item.id === chatData.currentChannelId);
+    React.useEffect(() => {
+        socket.on('newMessage', (payload) => {
+            console.log(payload, chatData.messages);
+            dispatch(addMessage(payload)); // => { body: "new message", channelId: 7, id: 8, username: "admin" }
+        });
+    }, []);
+
+    const onSubmit = ({message}) => {
+        socket.emit('newMessage', { body: message, channelId: currentChannel?.id, username: auth.username });
+    }
 
     return (
         <div className='chat'>
@@ -49,23 +66,33 @@ export const Main = () => {
                     <h4 className='chatTitle'>#{currentChannel?.name}</h4>
                 </div>
                 <div className='chatWindow'>
-                    <div className='chatMessages'></div>
+                    <div className='chatMessages'>
+                            {chatData.messages.filter((item) => item.channelId === currentChannel?.id).map((message) => {
+                            return (
+                                <>
+                                    <h3>{message.username}</h3>
+                                    <p>{message.body}</p>
+                                </>
+                            )
+                        })}
+                    </div>
                     <Formik
                         initialValues={{ message: '' }}
-                        onSubmit={alert}
+                        onSubmit={onSubmit}
                     >
                         {({ values, errors, handleSubmit, handleChange, handleBlur, touched }) => {
                             return (
                                 <form onSubmit={handleSubmit} className='chatForm'>
                                     <Form.Control
                                         type='textarea'
-                                        name='username'
+                                        name='message'
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                         value={values.username}
-                                        isInvalid={errors.username}
-                                        touched={touched.username?.toString()}
+                                        isInvalid={errors.message}
+                                        touched={touched.message?.toString()}
                                     />
+                                    <button>отправить</button>
                                 </form>
                             )
                         }}
